@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-urdu: "Noto Nastaliq Urdu", "DM Sans", sans-serif;
+
+  --color-brand: #059669;
+  --color-brand-dark: #047857;
+  --color-brand-light: #d1fae5;
+  --color-accent: #ea580c;
+  --color-accent-light: #ffedd5;
+  --color-surface: #fafaf9;
+  --color-ink: #1c1917;
+  --color-muted: #78716c;
+  --color-border: #e7e5e4;
+  --color-danger: #dc2626;
+  --color-card: #ffffff;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+
+  html[dir="rtl"],
+  html[dir="rtl"] body,
+  .font-urdu {
+    font-family: var(--font-urdu);
+  }
+
+  html[dir="ltr"],
+  html[dir="ltr"] body,
+  .font-sans-ui {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 50% at 0% 0%, rgba(5, 150, 105, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(234, 88, 12, 0.06), transparent),
+      var(--color-surface);
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  /* Keep table headers/cells aligned with page direction (RTL/LTR) */
+  table th,
+  table td {
+    text-align: start !important;
+  }
+
+  table th.text-end,
+  table td.text-end {
+    text-align: end !important;
+  }
+
+  table th.text-center,
+  table td.text-center {
+    text-align: center !important;
+  }
+
+  /* Keep numbers / emails LTR even in Urdu UI */
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="password"],
+  .ltr-force {
+    direction: ltr;
+    text-align: start;
+    unicode-bidi: isolate;
+  }
+}
+
+@layer utilities {
+  .market-shadow {
+    box-shadow: 0 1px 2px rgb(28 25 23 / 0.04), 0 8px 24px rgb(28 25 23 / 0.06);
+  }
+}

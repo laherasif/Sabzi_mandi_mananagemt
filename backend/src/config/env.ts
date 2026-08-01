@@ -6,6 +6,8 @@ dotenv.config()
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(5001),
+  // Comma-separated allowed frontend origins, e.g.
+  // https://sabzi-mandi-mananagemt.vercel.app,http://localhost:5173
   CLIENT_URL: z.string().default('http://localhost:5173'),
   MONGODB_URI: z.string().min(1),
   JWT_ACCESS_SECRET: z.string().min(16),
@@ -24,4 +26,12 @@ if (!parsed.success) {
   process.exit(1)
 }
 
-export const env = parsed.data
+const data = parsed.data
+const clientOrigins = data.CLIENT_URL.split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean)
+
+export const env = {
+  ...data,
+  CLIENT_ORIGINS: clientOrigins.length ? clientOrigins : ['http://localhost:5173'],
+}

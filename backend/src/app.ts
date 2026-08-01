@@ -11,7 +11,19 @@ export function createApp() {
   const app = express()
   app.set('trust proxy', 1)
   app.use(helmet())
-  app.use(cors({ origin: env.CLIENT_URL, credentials: true }))
+  app.use(
+    cors({
+      origin(origin, callback) {
+        // Allow non-browser clients (no Origin) and configured frontends
+        if (!origin || env.CLIENT_ORIGINS.includes(origin)) {
+          callback(null, true)
+          return
+        }
+        callback(new Error(`CORS blocked for origin: ${origin}`))
+      },
+      credentials: true,
+    }),
+  )
   app.use(express.json({ limit: '2mb' }))
   app.use(cookieParser())
   app.use(morgan('dev'))

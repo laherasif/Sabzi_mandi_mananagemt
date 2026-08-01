@@ -1,7 +1,25 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import en from './en.json'
-import ur from './ur.json'
+
+const en = {
+  appName: 'Sabzi Mandi',
+  tagline: 'Fruit & Sabzi Commission Agent',
+  login: 'Login',
+  email: 'Email',
+  password: 'Password',
+  welcome: 'Welcome back',
+  language: 'اردو',
+}
+
+const ur = {
+  appName: 'سبزی منڈی',
+  tagline: 'سبزی فروٹ کمیشن ایجنٹ',
+  login: 'لاگ اِن',
+  email: 'ای میل',
+  password: 'پاس ورڈ',
+  welcome: 'خوش آمدید',
+  language: 'EN',
+}
 
 const saved = localStorage.getItem('sabzi_lang') || 'ur'
 
@@ -12,37 +30,20 @@ void i18n.use(initReactI18next).init({
   },
   lng: saved.startsWith('ur') ? 'ur' : 'en',
   fallbackLng: 'en',
-  supportedLngs: ['en', 'ur'],
-  nonExplicitSupportedLngs: true,
   interpolation: { escapeValue: false },
 })
 
-/** Normalize i18n language to `en` | `ur`. */
-export function resolveLang(lang?: string): 'en' | 'ur' {
-  const value = (lang || i18n.resolvedLanguage || i18n.language || 'ur').toLowerCase()
-  return value.startsWith('ur') ? 'ur' : 'en'
-}
-
-export function applyDocumentDirection(lang?: string) {
-  const code = resolveLang(lang)
-  const dir = code === 'ur' ? 'rtl' : 'ltr'
+export function applyDir(lang: string) {
+  const code = lang.startsWith('ur') ? 'ur' : 'en'
   document.documentElement.lang = code
-  document.documentElement.dir = dir
-  document.body.dir = dir
-  document.body.classList.toggle('font-urdu', code === 'ur')
-  document.body.classList.toggle('font-sans-ui', code === 'en')
+  document.documentElement.dir = code === 'ur' ? 'rtl' : 'ltr'
 }
 
-export async function setAppLanguage(lang: 'en' | 'ur') {
+export async function setLang(lang: 'en' | 'ur') {
   await i18n.changeLanguage(lang)
   localStorage.setItem('sabzi_lang', lang)
-  applyDocumentDirection(lang)
+  applyDir(lang)
 }
 
-i18n.on('languageChanged', (lng) => {
-  applyDocumentDirection(lng)
-})
-
-applyDocumentDirection(saved)
-
+applyDir(saved)
 export default i18n

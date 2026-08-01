@@ -1,61 +1,41 @@
-import { Schema, model, Types, Document } from 'mongoose';
+import mongoose, { Schema, type InferSchemaType } from 'mongoose'
 
-export const PARTY_TYPES = ['customer', 'supplier', 'agent', 'transporter', 'labour'] as const;
-export type PartyType = (typeof PARTY_TYPES)[number];
+/** Party / Customer / Supplier — supports Mandi + live business schemas */
+export const ACCOUNT_TYPES = ['trader', 'customer', 'supplier', 'expense', 'cash', 'other'] as const
+export type AccountType = (typeof ACCOUNT_TYPES)[number]
 
-export interface IParty extends Document {
-  businessId: Types.ObjectId;
-  type: PartyType;
-  name: string;
-  nameUrdu?: string;
-  phone?: string;
-  phoneAlt?: string;
-  address?: string;
-  city?: string;
-  cnic?: string;
-  /** Opening balance in paisa. Positive = receivable (they owe us). */
-  openingBalancePaisa: number;
-  openingBalanceLocked: boolean;
-  /** Cached running balance in paisa (party owes us if positive). */
-  balancePaisa: number;
-  creditLimitPaisa: number;
-  notes?: string;
-  isActive: boolean;
-  isDeleted: boolean;
-  deletedAt?: Date;
-  deletedBy?: Types.ObjectId;
-  createdBy?: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const partySchema = new Schema<IParty>(
+const partySchema = new Schema(
   {
-    businessId: { type: Schema.Types.ObjectId, ref: 'Business', required: true, index: true },
-    type: { type: String, enum: PARTY_TYPES, required: true, index: true },
-    name: { type: String, required: true, trim: true },
-    nameUrdu: { type: String, trim: true },
-    phone: { type: String, trim: true },
-    phoneAlt: { type: String, trim: true },
-    address: { type: String, trim: true },
-    city: { type: String, trim: true },
-    cnic: { type: String, trim: true },
-    openingBalancePaisa: { type: Number, default: 0 },
-    openingBalanceLocked: { type: Boolean, default: false },
-    balancePaisa: { type: Number, default: 0 },
-    creditLimitPaisa: { type: Number, default: 0 },
-    notes: { type: String },
+    code: { type: String, trim: true, sparse: true },
+    nameUr: { type: String, default: '', trim: true },
+    nameEn: { type: String, default: '', trim: true },
+    /** Live API fields */
+    name: { type: String, default: '', trim: true },
+    nameUrdu: { type: String, default: '', trim: true },
+    type: { type: String, trim: true },
+    phone: { type: String, default: '', trim: true },
+    address: { type: String, default: '', trim: true },
+    bankAccountNumber: { type: String, default: '', trim: true },
+    accountType: { type: String, enum: ACCOUNT_TYPES },
+    accountTypeLabel: { type: String, default: '' },
+    date: { type: String, default: '' },
+    commission: { type: String, default: '2%' },
+    details: { type: String, default: '' },
+    item: { type: String, default: '' },
+    agrahi: { type: String, enum: ['NEW', 'OLD', ''], default: 'NEW' },
+    openingDebit: { type: Number, default: 0 },
+    openingCredit: { type: Number, default: 0 },
+    balance: { type: Number, default: 0 },
+    balancePaisa: { type: Number },
+    openingBalancePaisa: { type: Number },
+    businessId: { type: Schema.Types.ObjectId },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    deletedAt: { type: Date },
-    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
-  { timestamps: true }
-);
+  { timestamps: true, strict: false }
+)
 
-partySchema.index({ businessId: 1, type: 1, name: 1 });
-partySchema.index({ businessId: 1, phone: 1 });
-partySchema.index({ businessId: 1, isDeleted: 1, name: 'text', nameUrdu: 'text' });
+partySchema.index({ nameUr: 'text', nameEn: 'text', name: 'text', phone: 'text', code: 'text' })
 
-export const Party = model<IParty>('Party', partySchema);
+export type PartyDoc = InferSchemaType<typeof partySchema> & { _id: mongoose.Types.ObjectId }
+export const Party = mongoose.model('Party', partySchema)

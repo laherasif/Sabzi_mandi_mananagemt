@@ -1,45 +1,36 @@
 {
   "name": "sabzi-mandi-backend",
   "version": "1.0.0",
-  "description": "Sabzi Mandi Arhti & Commission Shop Management API",
-  "main": "dist/server.js",
+  "private": true,
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed": "tsx src/seeds/seed.ts"
+    "seed": "tsx src/seed.ts",
+    "clear-db": "tsx src/clearDb.ts"
   },
-  "keywords": [
-    "sabzi-mandi",
-    "commission-shop",
-    "mern"
-  ],
-  "license": "UNLICENSED",
-  "type": "commonjs",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
+    "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.6.1",
-    "helmet": "^8.3.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.8.1",
-    "morgan": "^1.11.0",
-    "pdfkit": "^0.19.1",
-    "zod": "^4.4.3"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.12.1",
+    "morgan": "^1.10.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/morgan": "^1.9.10",
-    "@types/node": "^26.1.2",
-    "@types/pdfkit": "^0.17.6",
-    "tsx": "^4.23.1",
-    "typescript": "^7.0.2"
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
   }
 }

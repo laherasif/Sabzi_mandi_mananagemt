@@ -1,48 +1,28 @@
-import { Schema, model, Types, Document } from 'mongoose';
-import bcrypt from 'bcryptjs';
-import { Role, ROLES } from '../config/roles';
+import mongoose, { Schema, type InferSchemaType } from 'mongoose'
+import bcrypt from 'bcryptjs'
 
-export interface IUser extends Document {
-  businessId: Types.ObjectId;
-  name: string;
-  email: string;
-  phone?: string;
-  password: string;
-  role: Role;
-  isActive: boolean;
-  isDeleted: boolean;
-  deletedAt?: Date;
-  lastLoginAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  comparePassword(candidate: string): Promise<boolean>;
-}
-
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema(
   {
-    businessId: { type: Schema.Types.ObjectId, ref: 'Business', required: true, index: true },
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, trim: true, lowercase: true },
-    phone: { type: String, trim: true },
-    password: { type: String, required: true, select: false, minlength: 6 },
-    role: { type: String, enum: ROLES, required: true },
-    isActive: { type: Boolean, default: true },
-    isDeleted: { type: Boolean, default: false },
-    deletedAt: { type: Date },
-    lastLoginAt: { type: Date },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String, required: true, minlength: 4, select: false },
+    role: { type: String, enum: ['owner', 'staff'], default: 'owner' },
   },
   { timestamps: true }
-);
+)
 
-userSchema.index({ businessId: 1, email: 1 }, { unique: true });
+userSchema.pre('save', async function hashPassword() {
+  if (!this.isModified('password')) return
+  this.password = await bcrypt.hash(this.password, 10)
+})
 
-userSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
-  this.password = await bcrypt.hash(this.password, 12);
-});
+userSchema.methods.comparePassword = function comparePassword(plain: string) {
+  return bcrypt.compare(plain, this.password)
+}
 
-userSchema.methods.comparePassword = function (candidate: string) {
-  return bcrypt.compare(candidate, this.password);
-};
+export type UserDoc = InferSchemaType<typeof userSchema> & {
+  _id: mongoose.Types.ObjectId
+  comparePassword(plain: string): Promise<boolean>
+}
 
-export const User = model<IUser>('User', userSchema);
+export const User = mongoose.model('User', userSchema)

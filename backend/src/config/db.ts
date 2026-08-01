@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import { env } from './env';
+import mongoose from 'mongoose'
+import { env } from './env'
 
-export async function connectDb(): Promise<void> {
-  mongoose.set('strictQuery', true);
-  await mongoose.connect(env.MONGODB_URI);
-  console.log(`MongoDB connected: ${mongoose.connection.name}`);
+export async function connectDb() {
+  mongoose.set('strictQuery', true)
+  await mongoose.connect(env.MONGODB_URI)
+  console.log(`MongoDB connected: ${mongoose.connection.name}`)
 }

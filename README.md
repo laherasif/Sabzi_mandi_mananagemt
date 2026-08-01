@@ -1,63 +1,54 @@
-# Sabzi Mandi — Arhti & Commission Shop Management
+# Sabzi Mandi — Classic Arhti UI
 
-Production-oriented MERN system for Pakistani sabzi mandi commission shops.
+## MongoDB Atlas
 
-Full architecture (folder structure, schemas, APIs, auth, invoice/ledger rules, milestones): see [ARCHITECTURE.md](./ARCHITECTURE.md).
+Edit `backend/.env` and set a working `MONGODB_URI`, then allow your IP in Atlas → Network Access.
 
-## Milestone 1 (implemented)
-
-- JWT access + refresh (httpOnly cookie) authentication
-- Roles: Owner, Admin, Accountant, Salesman, Viewer
-- Business settings
-- Shared Party model (customer / supplier / agent / transporter / labour)
-- Units with KG conversion (seeded on register)
-- Products (EN/UR names, rates in paisa, stock)
-- Multi-tenant `businessId` scoping
-- Soft deletes, audit logs, money as integer paisa
-- React + Vite + TS + Tailwind + RTK Query + i18n (Urdu RTL + English)
-
-## Quick start
-
-### Prerequisites
-
-- Node.js 20+
-- MongoDB 6+ (`mongodb://127.0.0.1:27017`)
-- For invoice confirm transactions in later milestones: MongoDB replica set
-
-### Backend
+## Run
 
 ```bash
+# Backend
 cd backend
-cp .env.example .env
 npm install
+npm run seed   # first time — owner + sample masters
 npm run dev
-```
 
-API: `http://localhost:5001/api/v1/health`
-
-### Frontend
-
-```bash
+# Frontend
 cd frontend
 npm install
 npm run dev
 ```
 
-App: `http://localhost:5173`
+- App: http://localhost:5173  
+- API health: http://localhost:5001/api/v1/health  
+- Login: `owner@shop.com` / `1234`
 
-1. Register a shop
-2. Login
-3. Manage parties, products, units, settings
+## Domain (dynamic)
 
-## Money
+```
+Party (customer/trader/supplier) ──┬── LedgerEntry
+Product (جنس)                      │
+Marfat (معرفت + زمیندار) ──────────┤
+SaleBill + lines + charges ────────┤ posts ledger
+PurchaseBill + lines + charges ────┤
+CustomerPurchase ──────────────────┤
+Voucher (بنام/جمع/وصولی) ──────────┘
+```
 
-All amounts are stored as **integer paisa** (1 PKR = 100 paisa). UI accepts PKR and converts.
+### API (`/api/v1`)
 
-## Next milestones
+| Resource | Endpoints |
+|----------|-----------|
+| Auth | `POST /auth/login`, `/register`, `GET /auth/me` |
+| Parties | CRUD + `GET /parties/next-code` |
+| Products | CRUD + next-code |
+| Marfat | CRUD + next-code |
+| Sales / Purchases / Customer-purchases | list, create, update, delete, next-invoice |
+| Vouchers | list, create, delete (بنام/جمع/وصولی) |
+| Ledger | list, party ledger, summary |
 
-- M2 Purchases & inventory
-- M3 Sales invoices + PDF print
-- M4 Ledger & payments
-- M5 Cash book & expenses
-- M6 Dashboard charts & reports
-- M7 Hardening & deploy
+Frontend proxies `/api` → `localhost:5001`. Masters, bills, payments, party ledger are API-backed.
+
+## UI
+
+Classic Mandi home with dual sidebars, Urdu/English, and commission-shop workflows.

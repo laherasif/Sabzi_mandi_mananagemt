@@ -13,7 +13,7 @@ export function MandiHomeLink({ lang, className }: MandiHomeLinkProps) {
 
   return (
     <Link
-      to="/"
+      to="/home"
       dir={rtl ? 'rtl' : 'ltr'}
       className={cn(
         'inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white/15 px-3 py-2 text-sm font-semibold text-white ring-1 ring-white/20',

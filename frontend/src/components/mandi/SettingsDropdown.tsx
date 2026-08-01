@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
+import { clearAuth } from '@/lib/auth'
 import {
   BookOpen,
   ChevronDown,
@@ -308,7 +309,8 @@ export function SettingsDropdown({ lang }: { lang: 'en' | 'ur' }) {
     setOpen(false)
     setFlyout(null)
     if (item.action === 'logout') {
-      navigate('/login')
+      clearAuth()
+      navigate('/', { replace: true })
       return
     }
     if (item.to) navigate(item.to)

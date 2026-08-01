@@ -43,7 +43,7 @@ export function LoginPage() {
       toast.success('Logged in successfully')
       // Restore app RTL/LTR before MandiShell paints (form stays LTR via local dir)
       restoreAppDir()
-      navigate('/')
+      navigate('/home')
     } catch (err) {
       const message = err instanceof ApiClientError ? err.message : 'Login failed'
       setError(message)

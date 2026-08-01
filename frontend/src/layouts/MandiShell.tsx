@@ -90,7 +90,7 @@ export function MandiShell() {
   const { i18n } = useTranslation()
   const location = useLocation()
   const lang = (i18n.language || 'ur').startsWith('ur') ? 'ur' : 'en'
-  const isHome = location.pathname === '/'
+  const isHome = location.pathname === '/home' || location.pathname === '/'
   const railSize = isHome ? 'comfortable' : 'compact'
   const shopTitle =
     lang === 'ur'
@@ -124,7 +124,7 @@ export function MandiShell() {
           </div>
 
           <Link
-            to="/"
+            to="/home"
             className="flex min-w-0 max-w-[min(100vw-11rem,42rem)] items-center justify-center gap-2.5 overflow-visible px-1 sm:gap-3"
             dir={lang === 'ur' ? 'rtl' : 'ltr'}
           >
